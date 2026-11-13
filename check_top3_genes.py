@@ -31,7 +31,6 @@ def dump(path, value):
 
 
 def cached_json(cache, label, url, params=None, payload=None):
-    # Не сохраняем ключи доступа в файлах и сообщениях об ошибках.
     key = hashlib.sha256(json.dumps([label, url, params, payload], sort_keys=True).encode()).hexdigest()
     path = cache / (label + '_' + key[:20] + '.json')
     if path.exists():
@@ -78,7 +77,6 @@ def normalize(db, number):
 
 
 def read_orphanet(cache):
-    # Открытые официальные выгрузки Orphanet: связи и внешние ID.
     links, disorders, gene_mim = defaultdict(set), {}, defaultdict(set)
     status = {}
     for product in (1,6):
@@ -148,7 +146,6 @@ def read_clingen(cache):
 
 
 def variant_notations(tx):
-    # Используем точные записи транскрипта и белка, а не один символ гена.
     terms = set()
     for value in (tx.get('hgvsc',''), tx.get('hgvsp','')):
         if ':' in value:
@@ -227,7 +224,6 @@ def omim(cache, did, gene, tx, gene_mim):
 
 
 def live_clinvar(cache, variation_id, variant_id):
-    # Повторно запрашиваем VCV; проверяем точный аллель перед чтением RCV.
     if not re.fullmatch(r"\d+", variation_id):
         return {"status":"no_VariationID_in_previous_VCF", "records":[]}
     path=cache/("clinvar_live_"+variation_id+".xml")
@@ -341,7 +337,6 @@ def main():
     print('Загружаем официальные справочники Orphanet и ClinGen…',flush=True)
     links,disorders,gene_mim,orpha_status=read_orphanet(cache)
     clingen=read_clingen(cache)
-    # Регистр наследования HPO: только явно аннотированные модели.
     hpoa=root/'stage4_results/phenotype.hpoa'
     lines=hpoa.read_text().splitlines()
     index=next(i for i,x in enumerate(lines) if x.lstrip('#').startswith(('database_id\t','DatabaseID\t')))
