@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Проверка трёх генов на случай для учебного набора, Python 3.
-Colab: %run /content/check_top3_genes.py --root /content
-Нужны requests и pandas (в Colab уже есть).
-OMIM_API_KEY задаётся через os.environ или Colab Secrets, не в тексте кода.
-Ранжирование эвристическое; результаты не являются диагнозом или ACMG-классификацией.
-"""
+"""Проверка трёх генов на случай для учебного набора, Python 3."""
 import argparse
 import hashlib
 import io
