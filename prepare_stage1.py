@@ -9,7 +9,6 @@ from pathlib import Path
 
 
 def write_tsv(path, fields, rows):
-    # Записываем таблицу с разделителем табуляцией и строкой заголовков.
     with path.open('w', encoding='utf-8', newline='') as handle:
         writer = csv.DictWriter(handle, fieldnames=fields, delimiter='\t')
         writer.writeheader()
@@ -17,7 +16,6 @@ def write_tsv(path, fields, rows):
 
 
 def case_id(path):
-    # Извлекаем идентификатор случая из пути к файлу.
     match = re.search(r'case_\d+', str(path))
     if not match:
         raise ValueError(f'No case_XX identifier: {path}')
@@ -25,7 +23,6 @@ def case_id(path):
 
 
 def read_vcf(path, sample):
-    # Читаем обычный или сжатый VCF, сохраняя исходный генотип.
     opener = gzip.open if path.name.endswith('.gz') else open
     rows, samples = [], None
     with opener(path, 'rt', encoding='utf-8') as handle:
@@ -81,7 +78,6 @@ def read_vcf(path, sample):
 
 
 def read_hpo(path):
-    # Поддерживаем список признаков и несколько распространённых структур JSON.
     obj = json.loads(path.read_text(encoding='utf-8'))
     if isinstance(obj, list):
         features = obj
@@ -107,7 +103,6 @@ def read_hpo(path):
         rows.append(dict(case_id=case_id(path), hpo_id=identifier,
                          label=term.get('label', term.get('name', '')),
                          excluded=excluded, source=str(path)))
-    # Один признак не должен одновременно быть присутствующим и отсутствующим.
     states = {}
     for row in rows:
         key = row['hpo_id']
@@ -160,8 +155,6 @@ def main():
     write_tsv(out/'hpo_present.tsv', hf, [r for r in hpo if not r['excluded']])
     write_tsv(out/'hpo_excluded.tsv', hf, [r for r in hpo if r['excluded']])
     write_tsv(out/'summary.tsv', list(summary[0]), summary)
-    # Создаём VCF для VEP с уникальными вариантами из всех случаев.
-    # Генотипы сохраняются отдельно в variants.tsv.
     unique = {(r['chrom'],r['pos'],r['ref'],r['alt']) for r in variants}
     with (out/'vep_input.vcf').open('w', encoding='utf-8') as handle:
         handle.write('##fileformat=VCFv4.2\n##reference=GRCh38\n')
