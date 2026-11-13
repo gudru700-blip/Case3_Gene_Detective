@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Стадия 1: подготовка данных. Используется только стандартная библиотека Python.
-Вход: case_XX*.vcf[.gz] и case_XX*phenotype*.json.
-Запуск: python3 prepare_stage1.py --input DATA --output stage1
-Координаты сохраняются в системе GRCh38 с нумерацией от 1.
-Фильтрация по патогенности не выполняется.
-"""
+"""Стадия 1: подготовка данных."""
 import argparse
 import csv
 import gzip
